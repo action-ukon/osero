@@ -50,15 +50,11 @@ const WhiteStone = styled.div`
   left: 10%;
 `
 const YellowStone = styled.div`
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   border: solid;
   border-color: yellow;
-  background-color: white;
-  border-radius: 60px;
-  position: absolute;
-  top: 10%;
-  left: 10%;
+  background-color: yellow;
 `
 const putCount = 0
 const Home: NextPage = () => {
@@ -132,6 +128,7 @@ const Home: NextPage = () => {
     return candidates //配列返す
   }, [turn, board])
   //色変えない時パス
+  //todoルール正直わからんかった
   if (puttableCells.length < 0) {
     if (turn === 1) {
       pathCountBla += 1
