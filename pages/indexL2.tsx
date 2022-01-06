@@ -56,7 +56,10 @@ const YellowStone = styled.div`
   border-color: yellow;
   background-color: yellow;
 `
-const putCount = 0
+let putCount = 4
+let pathCountBla = 0
+let pathCountWhi = 0
+
 const Home: NextPage = () => {
   //prettier-ignore
   const [board, setBoard] = useState ([
@@ -73,8 +76,7 @@ const Home: NextPage = () => {
   // 1:黒 2:白
   const [turn, setTurn] = useState(1)
   type Cell = { x: number; y: number }
-  let pathCountBla = 0
-  let pathCountWhi = 0
+
   const puttableCells: Cell[] = useMemo(() => {
     const directions = [
       [0, 1],
@@ -127,25 +129,58 @@ const Home: NextPage = () => {
     }
     return candidates //配列返す
   }, [turn, board])
-  //色変えない時パス
-  //todoルール正直わからんかった
-  if (puttableCells.length < 0) {
-    if (turn === 1) {
-      pathCountBla += 1
-      setTurn(3 - turn)
-      alert('黒のパス' + pathCountBla + '回目')
-    } else if (turn === 2) {
-      pathCountWhi += 1
-      setTurn(3 - turn)
-      alert('白のパス' + pathCountWhi + '回目')
-    }
-  }
+
   // 黄色の3を振る
   for (let t = 0; puttableCells.length - t > 0; t++) {
     const candidatesX = puttableCells[t].x
     const candidatesY = puttableCells[t].y
     board[candidatesY][candidatesX] = 3
   }
+  // 終わり
+  if (putCount > 63) {
+    let brackCnt = 0
+    let whiteCnt = 0
+    for (let i = 0; i < 8; i++) {
+      for (let n = 0; n < 8; n++) {
+        if (board[n][i] === 1) {
+          brackCnt++
+        } else if (board[n][i] === 2) {
+          whiteCnt++
+        }
+      }
+    }
+    console.log('brackCnt', brackCnt)
+    if (brackCnt > whiteCnt) {
+      console.log('黒の勝ちい')
+    } else if (brackCnt === whiteCnt) {
+      console.log('引き分け')
+    } else if (whiteCnt > brackCnt) {
+      console.log('白の勝ちい')
+    }
+  }
+
+  //色変えない時パス
+  if (puttableCells.length < 1 && putCount < 64) {
+    if (turn === 1) {
+      pathCountBla += 1
+      console.log('pathCountBla', pathCountBla)
+      if (pathCountWhi === 1) {
+        alert('黒の負けです')
+      } else {
+        pathCountBla = 0
+      }
+    } else if (turn === 2) {
+      pathCountWhi += 1
+      console.log(pathCountWhi, 'pathCountWhi')
+      if (pathCountBla === 1) {
+        alert('白の負けです')
+      } else {
+        pathCountWhi = 0
+      }
+    }
+    setTurn(3 - turn)
+  }
+
   const onClick = (x: number, y: number, color: number) => {
     const newBoard = JSON.parse(JSON.stringify(board))
     if (color !== 0 && color !== 3) return
@@ -213,8 +248,11 @@ const Home: NextPage = () => {
       }
       setTurn(3 - turn)
     }
-    console.log('putCount', putCount)
+    if (color === 3) {
+      putCount += 1
+    }
   }
+  // console.log('putCount', putCount)
 
   return (
     <Container>
